@@ -63,6 +63,18 @@ describe('Voting', () => {
   })
 
   it('vote', async () => {
-    
+    await votingProgram.methods.vote(
+      "Elon",
+      new anchor.BN(1)
+    ).rpc();
+
+    const [elonAddress] = PublicKey.findProgramAddressSync(
+      [new anchor.BN(1).toArrayLike(Buffer, 'le', 8), Buffer.from('Elon')],
+      programAddress,
+    )
+
+    const elonCandidate = await votingProgram.account.candidate.fetch(elonAddress)
+    console.log(elonCandidate)
+    expect(elonCandidate.candidateVotes.toNumber()).equal(1)
   })
 })
